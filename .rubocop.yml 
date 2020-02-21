@@ -1,0 +1,25 @@
+AllCops:
+  Exclude:
+    - '**/Rakefile'
+    - 'Gemfile'
+    - 'vendor/**/**'
+    - '*.gemspec'
+Layout/IndentArray:
+  EnforcedStyle: consistent
+Lint/InterpolationCheck:
+  Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/**'
+Metrics/LineLength:
+  Max: 120
+Metrics/MethodLength:
+  Enabled: false
+Metrics/ModuleLength:
+  Enabled: false
+Metrics/AbcSize:
+  Max: 30
+Style/RegexpLiteral:
+  EnforcedStyle: mixed
+Style/ParallelAssignment:
+  Enabled: false

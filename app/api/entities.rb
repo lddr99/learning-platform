@@ -25,6 +25,10 @@ module Entities
     expose :title
     expose :description
     expose :url
+    expose :category_id, as: :category_id do |course|
+      course.category.id
+    end
+
     expose :price, using: PriceEntity
   end
 end

@@ -9,13 +9,11 @@ module Entities
     expose :name
   end
 
-  class SimpleCurrencyEntity < Grape::Entity
-    expose :name, as: :currency
-  end
-
   class PriceEntity < Grape::Entity
-    expose :currency, merge: true, using: SimpleCurrencyEntity
-    expose :price
+    expose :currency, as: :currency_id do |price|
+      price.currency.id
+    end
+
     expose :amount
   end
 

@@ -8,7 +8,9 @@ class CourseEditor < Grape::API
 
     route_param :id do
       get do
-        Course.find(params[:id])
+        course = Course.find(params[:id])
+        data = Entities::CourseEntity.represent(course)
+        data.as_json
       end
     end
   end

@@ -9,6 +9,14 @@ class CourseEditor < Grape::API
     end
   end
 
+  resource 'categories' do
+    get do
+      categories = Category.all
+      data = Entities::CategoryEntity.represent(categories)
+      data.as_json
+    end
+  end
+
   resource 'currencies' do
     get do
       currencies = Currency.all

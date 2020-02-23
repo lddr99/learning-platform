@@ -1,4 +1,9 @@
 module Entities
+  class CategoryEntity < Grape::Entity
+    expose :id
+    expose :name
+  end
+
   class CurrencyEntity < Grape::Entity
     expose :id
     expose :name

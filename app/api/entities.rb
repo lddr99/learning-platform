@@ -16,6 +16,7 @@ module Entities
   class PriceEntity < Grape::Entity
     expose :currency, merge: true, using: SimpleCurrencyEntity
     expose :price
+    expose :amount
   end
 
   class CourseEntity < Grape::Entity

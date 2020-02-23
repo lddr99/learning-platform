@@ -9,6 +9,7 @@ module Entities
   end
 
   class CourseEntity < Grape::Entity
+    expose :id
     expose :title
     expose :is_available
     expose :duration_of_days

@@ -5,3 +5,19 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+Currency.create([
+                  { name: 'TWD' },
+                  { name: 'HKD' },
+                  { name: 'USD' },
+                  { name: 'EUR' },
+                  { name: 'JPY' },
+                  { name: 'AUD' },
+                  { name: 'GBP' }
+                ])
+
+Category.create([
+                  { name: 'Video' },
+                  { name: 'Article' },
+                  { name: 'Tips' }
+                ])

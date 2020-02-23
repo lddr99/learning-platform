@@ -1,10 +1,15 @@
 module Entities
   class CurrencyEntity < Grape::Entity
+    expose :id
+    expose :name
+  end
+
+  class SimpleCurrencyEntity < Grape::Entity
     expose :name, as: :currency
   end
 
   class PriceEntity < Grape::Entity
-    expose :currency, merge: true, using: CurrencyEntity
+    expose :currency, merge: true, using: SimpleCurrencyEntity
     expose :price
   end
 

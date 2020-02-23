@@ -3,7 +3,7 @@ class CourseEditor < Grape::API
     desc 'Return all courses.'
 
     get do
-      courses = Course.includes(price: :currency).all
+      courses = Course.includes(:category, price: :currency).all
       data = Entities::CourseEntity.represent(courses)
       data.as_json
     end

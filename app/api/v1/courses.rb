@@ -7,6 +7,7 @@ module V1
     end
 
     params do
+      optional :is_available, type: Boolean
       optional :category_ids, type: Array
     end
 
@@ -18,6 +19,10 @@ module V1
 
         unless params['category_ids'].nil?
           courses = courses.where(category_id: params['category_ids'])
+        end
+
+        unless params['is_available'].nil?
+          courses = courses.where(is_available: params['is_available'])
         end
 
         Entities::CourseEntity.represent(courses)

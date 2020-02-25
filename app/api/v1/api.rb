@@ -2,7 +2,8 @@ module V1
   class API < Grape::API
     format :json
 
-    mount V1::Subscriptions
+    mount Subscriptions
     mount Courses
+    mount Payments
   end
 end

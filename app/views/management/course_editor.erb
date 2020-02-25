@@ -159,7 +159,7 @@ new Vue({
         this.fetchCurrencies();
       },
       fetchCourses() {
-        axios.get('/api/courses')
+        axios.get('/api/admin/courses')
           .then(({data}) => {
             this.courses = data;
             this.showLogin = false;
@@ -171,18 +171,18 @@ new Vue({
           });;
       },
       fetchCategories() {
-        axios.get('/api/categories')
+        axios.get('/api/admin/categories')
           .then(({data}) => (this.categories = data));
       },
       fetchCurrencies() {
-        axios.get('/api/currencies')
+        axios.get('/api/admin/currencies')
           .then(({data}) => (this.currencies = data));
       },
       onSubmit(course) {
         course.id === undefined ? this.createCourse(course) : this.updateCourse(course);
       },
       createCourse(course) {
-        const url = '/api/courses';
+        const url = '/api/admin/courses';
 
         axios.post(url, course)
             .then(({ data }) => {
@@ -194,7 +194,7 @@ new Vue({
             });
       },
       updateCourse(course) {
-        const url = `/api/courses/${course.id}`;
+        const url = `/api/admin/courses/${course.id}`;
 
         axios.put(url, course)
             .then(() => {
@@ -205,7 +205,7 @@ new Vue({
             });
       },
       deleteCourse(course) {
-        const url = `/api/courses/${course.id}`;
+        const url = `/api/admin/courses/${course.id}`;
 
         axios.delete(url)
             .then(() => {

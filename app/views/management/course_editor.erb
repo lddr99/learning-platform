@@ -1,0 +1,185 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue-toasted"></script>
+
+<h1 class="mt-5 mb-5 text-center">Management - Course Editor</h1>
+<hr class="mb-5" />
+<div id="app">
+  <div class="container">
+    <div class="row row-cols-1 row-cols-md-3">
+      <div class="col mb-4"
+        v-for="(course, index) in courses"
+        :key="course.id"
+      >
+        <div class="card text-white bg-dark">
+          <div class="card-header">{{ course.title }}</div>
+          <div class="card-body">
+            <form @submit.prevent="onSubmit(course)">
+              <div class="form-group">
+                <label>Title</label>
+                <input type="text" class="form-control" v-model="course.title" required>
+              </div>
+              <div class="form-group">
+                <label>URL</label>
+                <input type="text" class="form-control" v-model="course.url" required>
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <input type="text" class="form-control" v-model="course.description">
+              </div>
+              <div class="form-group">
+                <label>Category</label>
+                <select class="custom-select" v-model="course.category_id">
+                  <option v-for="category in categories" v-bind:value="category.id">
+                    {{ category.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="row form-group">
+                <div class="col">
+                  <label>Price</label>
+                  <input type="number" class="form-control" v-model="course.price.amount" required>
+                </div>
+                <div class="col">
+                  <label>Currency</label>
+                  <select class="custom-select" v-model="course.price.currency_id">
+                    <option v-for="currency in currencies" v-bind:value="currency.id">
+                      {{ currency.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label :for="'duration_of_days' + index">duration_of_days {{ course.duration_of_days }}</label>
+                <input type="range" class="custom-range" min="1" max="30"
+                  :id="'duration_of_days' + index"
+                  v-model="course.duration_of_days"
+                >
+              </div>
+              <div class="form-group">
+                <div class="custom-control custom-switch">
+                  <input class="custom-control-input" type="checkbox" :id="'availableCheck' + index"
+                    v-model="course.is_available"
+                  >
+                  <label class="custom-control-label" :for="'availableCheck' + index">
+                    is_available
+                  </label>
+                </div>
+              </div>
+              <div class="d-flex">
+                <button type="button" class="flex-shrink-1 btn btn-outline-light"
+                  @click.prevent="removeCourse(index, course)"
+                >
+                  Delete
+                </button>
+                &nbsp;
+                <button type="submit" class="w-100 btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="my-5 btn btn-warning btn-lg btn-block"
+      @click.prevent="addCourse"
+    >
+      Add Course
+    </button>
+    <div class="border-top my-5"></div>
+  </div>
+</div>
+<script>
+Vue.use(Toasted)
+
+new Vue({
+  el: '#app',
+  data () {
+    return {
+      courseTemplate: {
+        title: '',
+        is_available: false,
+        duration_of_days: 30,
+        description: '',
+        url: '',
+        category_id: 1,
+        price: {
+          currency_id: 1,
+          amount: '',
+        },
+      },
+      courses: [],
+      categories: [],
+      currencies: [],
+    }
+  },
+  created () {
+    this.fetchCourses();
+    this.fetchCategories();
+    this.fetchCurrencies();
+  },
+  methods: {
+      fetchCourses() {
+        axios.get('/api/courses')
+          .then(({data}) => (this.courses = data));
+      },
+      fetchCategories() {
+        axios.get('/api/categories')
+          .then(({data}) => (this.categories = data));
+      },
+      fetchCurrencies() {
+        axios.get('/api/currencies')
+          .then(({data}) => (this.currencies = data));
+      },
+      onSubmit(course) {
+        course.id === undefined ? this.createCourse(course) : this.updateCourse(course);
+      },
+      createCourse(course) {
+        const url = '/api/courses';
+
+        axios.post(url, course)
+            .then(({ data }) => {
+              course.id = data.id;
+              this.$toasted.success(`Create! (${course.title})`).goAway(5000);
+            })
+            .catch(() => {
+              this.$toasted.error(`Fail! (${course.title})`).goAway(5000);
+            });
+      },
+      updateCourse(course) {
+        const url = `/api/courses/${course.id}`;
+
+        axios.put(url, course)
+            .then(() => {
+              this.$toasted.success(`Update! (${course.title})`).goAway(5000);
+            })
+            .catch(() => {
+              this.$toasted.error(`Fail! (${course.title})`).goAway(5000);
+            });
+      },
+      deleteCourse(course) {
+        const url = `/api/courses/${course.id}`;
+
+        axios.delete(url)
+            .then(() => {
+              this.$toasted.info(`Delete! (${course.title})`).goAway(5000);
+            })
+            .catch(() => {
+              this.$toasted.error(`Fail! (${course.title})`).goAway(5000);
+            });
+      },
+      addCourse() {
+        const course = JSON.parse(JSON.stringify(this.courseTemplate));
+
+        this.courses.push(course);
+      },
+      removeCourse(deprecatedIndex, deprecatedCourse) {
+        if (deprecatedCourse.id !== undefined) {
+          this.deleteCourse(deprecatedCourse);
+        }
+
+        this.courses.splice(deprecatedIndex, 1);
+      },
+  },
+})
+</script>

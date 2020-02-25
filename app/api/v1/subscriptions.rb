@@ -1,6 +1,6 @@
 module V1
   class Subscriptions < Grape::API
-    helpers V1::Helpers
+    helpers APIHelpers::AuthHelpers
 
     resource 'subscriptions' do
       post do

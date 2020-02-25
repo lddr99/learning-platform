@@ -3,6 +3,10 @@ module V1
     helpers V1::Helpers
 
     resource 'subscriptions' do
+      params do
+        requires :course_id, type: Integer
+      end
+
       post do
         authenticate!
 

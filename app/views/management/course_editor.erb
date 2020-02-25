@@ -6,7 +6,36 @@
 <h1 class="mt-5 mb-5 text-center">Management - Course Editor</h1>
 <hr class="mb-5" />
 <div id="app">
-  <div class="container">
+
+  <div class="container"
+    v-if="showLogin"
+  >
+    <div class="row my-5 justify-content-center align-items-center">
+      <div class="card text-white bg-secondary mb-3" style="width: 300px;">
+        <div class="card-header">Login</div>
+        <div class="card-body">
+          <form ref="loginForm"
+            @submit.prevent
+          >
+            <div class="form-group">
+              <label for="email" class="sr-only">Email address</label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="Email address" autofocus="" required>
+            </div>
+            <div class="form-group">
+              <label for="password" class="sr-only">Password</label>
+              <input type="password" id="password" name="password" class="form-control" min="6" placeholder="Password" required>
+            </div>
+            <button class="btn btn-dark btn-lg btn-block" @click="onLogin">LogIn</button>
+            <button class="btn btn-dark btn-lg btn-block" @click="onRegister">Register</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container"
+    v-if="showEditor"
+  >
     <div class="row row-cols-1 row-cols-md-3">
       <div class="col mb-4"
         v-for="(course, index) in courses"
@@ -87,6 +116,11 @@
       Add Course
     </button>
     <div class="border-top my-5"></div>
+    <button type="button" class="my-5 btn btn-secondary btn-lg btn-block"
+      @click.prevent="Logout"
+    >
+      Logout
+    </button>
   </div>
 </div>
 <script>
@@ -96,6 +130,8 @@ new Vue({
   el: '#app',
   data () {
     return {
+      showLogin: true,
+      showEditor: false,
       courseTemplate: {
         title: '',
         is_available: false,
@@ -114,14 +150,25 @@ new Vue({
     }
   },
   created () {
-    this.fetchCourses();
-    this.fetchCategories();
-    this.fetchCurrencies();
+    this.fetchAll();
   },
   methods: {
+      fetchAll() {
+        this.fetchCourses();
+        this.fetchCategories();
+        this.fetchCurrencies();
+      },
       fetchCourses() {
         axios.get('/api/courses')
-          .then(({data}) => (this.courses = data));
+          .then(({data}) => {
+            this.courses = data;
+            this.showLogin = false;
+            this.showEditor = true;
+          })
+          .catch(() => {
+            this.showLogin = true;
+            this.showEditor = false;
+          });;
       },
       fetchCategories() {
         axios.get('/api/categories')
@@ -179,6 +226,44 @@ new Vue({
         }
 
         this.courses.splice(deprecatedIndex, 1);
+      },
+      onSignIn(url) {
+
+        const form = this.$refs.loginForm;
+        const formData = new FormData(form);
+
+        axios.post(url, formData)
+          .then( response => {
+            let headers = {};
+
+            headers['access-token'] = response.headers['access-token'];
+            headers['token-type'] = response.headers['token-type'];
+            headers['client'] = response.headers['client'];
+            headers['expiry'] = response.headers['expiry'];
+            headers['uid'] = response.headers['uid'];
+
+            axios.get('/api-auth/validate_token', { params:{}, headers })
+              .then( response => {
+                this.fetchAll();
+              });
+          });
+      },
+      onLogin() {
+        const url = '/api-auth/sign_in';
+
+        this.onSignIn(url);
+      },
+      onRegister() {
+        const url = '/api-auth';
+
+        this.onSignIn(url);
+      },
+
+      Logout() {
+        axios.delete('/api-auth/sign_out').catch(() => {
+          this.showLogin = true;
+          this.showEditor = false;
+        });
       },
   },
 })

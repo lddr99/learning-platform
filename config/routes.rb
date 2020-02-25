@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  mount APIBase => '/'
+  get 'management/course-editor', to: 'management#course_editor'
 
-  get 'management/course-editor'
+  mount_devise_token_auth_for 'User', at: 'api-auth'
+  mount APIBase => '/'
 end

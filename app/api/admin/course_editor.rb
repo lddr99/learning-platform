@@ -1,6 +1,6 @@
 module Admin
   class CourseEditor < Grape::API
-    helpers V1::Helpers
+    helpers APIHelpers::AuthHelpers
 
     before do
       authenticate!

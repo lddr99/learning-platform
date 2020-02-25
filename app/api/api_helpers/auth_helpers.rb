@@ -1,5 +1,5 @@
-module V1
-  module Helpers
+module APIHelpers
+  module AuthHelpers
     extend Grape::API::Helpers
 
     def current_user

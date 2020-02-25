@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_24_093222) do
+ActiveRecord::Schema.define(version: 2020_02_25_080235) do
 
   create_table "categories", force: :cascade do |t|
     t.string "name", null: false
@@ -35,10 +35,27 @@ ActiveRecord::Schema.define(version: 2020_02_24_093222) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.integer "subscription_id", null: false
+    t.integer "currency_id", null: false
+    t.decimal "amount", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "prices", force: :cascade do |t|
     t.integer "course_id", null: false
     t.integer "currency_id", null: false
     t.decimal "amount", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "course_id"
+    t.datetime "start_at"
+    t.datetime "end_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

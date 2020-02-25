@@ -1,11 +1,14 @@
-module V1
+module Admin
   class CourseEditor < Grape::API
-    helpers V1::Helpers
+    helpers APIHelpers::AuthHelpers
+
+    before do
+      authenticate!
+    end
 
     resource 'courses' do
       desc 'Return all courses.'
       get do
-        authenticate!
         courses = Course.includes(:category, price: :currency).all
         data = Entities::CourseEntity.represent(courses)
         data.as_json
@@ -13,7 +16,6 @@ module V1
 
       desc 'Create a course.'
       post do
-        authenticate!
         course = Course.new({
           title: params[:title],
           is_available: params[:is_available],
@@ -39,7 +41,6 @@ module V1
       end
       route_param :id do
         put do
-          authenticate!
           course = Course.find(params[:id])
           course.update(
             title: params[:title],
@@ -63,7 +64,6 @@ module V1
       end
       route_param :id do
         delete do
-          authenticate!
           course = Course.find(params[:id])
           course.destroy
         end

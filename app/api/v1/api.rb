@@ -3,5 +3,6 @@ module V1
     format :json
 
     mount V1::Subscriptions
+    mount Courses
   end
 end

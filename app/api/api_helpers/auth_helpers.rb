@@ -1,15 +1,14 @@
 module APIHelpers
   module AuthHelpers
+    include GrapeDeviseTokenAuth::AuthHelpers
     extend Grape::API::Helpers
 
     def current_user
-      env['warden'].user
+      env['warden'].user || authenticate_user
     end
 
     def authenticate!
-      unless current_user
-        error!('401 Unauthorized', 401)
-      end
+      error!('401 Unauthorized', 401) unless current_user
     end
   end
 end

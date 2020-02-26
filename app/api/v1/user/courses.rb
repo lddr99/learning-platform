@@ -6,7 +6,7 @@ module V1
       helpers do
         def request_other_user!
           unless current_user.id == params['id']
-            error!('Insufficient privilege to perform the requested operation.', 401)
+            error!('Insufficient privilege to perform the requested operation.', 403)
           end
         end
       end

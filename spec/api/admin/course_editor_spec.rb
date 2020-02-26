@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'test the APIs for course editor', type: :request do
   context 'admin permissions guard' do
-    it 'when the user didn\'t log in' do
+    it 'when the user didn\'t login' do
       get '/api/admin/courses'
 
       expect(response.status).to eq(401)

@@ -1,11 +1,5 @@
 module Admin
   class CourseEditor < Grape::API
-    helpers APIHelpers::AuthHelpers
-
-    before do
-      authenticate_admin!
-    end
-
     resource 'courses' do
       desc 'Return courses.'
       get do

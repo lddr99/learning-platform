@@ -2,6 +2,7 @@ module V1
   class Subscriptions < Grape::API
     helpers APIHelpers::AuthHelpers
 
+    desc 'Subscribe to courses.'
     resource 'subscriptions' do
       params do
         requires :course_id, type: Integer

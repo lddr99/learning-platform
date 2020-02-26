@@ -16,3 +16,33 @@ FactoryBot.define do
     end
   end
 end
+
+FactoryBot.define do
+  factory :category do
+    name { 'category name' }
+  end
+
+  factory :currency do
+    name { 'TWD' }
+  end
+
+  factory :price do
+    course
+    currency
+    amount { 100 }
+  end
+
+  factory :course do
+    title { 'Course Title' }
+    is_available { true }
+    duration_of_days { 12 }
+    description { 'Course Description' }
+    url { 'https://coures.com.tw' }
+    category
+
+    after(:create) do |course|
+      create_list(:price, 1, course_id: course.id)
+    end
+  end
+end
+

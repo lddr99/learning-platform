@@ -49,3 +49,5 @@ gem 'bcrypt', '~> 3.1'
 gem "devise", "~> 4.7"
 gem 'devise_token_auth', '~> 1.1'
 
+
+gem "grape_devise_token_auth", "~> 0.1.4"

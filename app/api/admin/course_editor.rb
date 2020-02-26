@@ -3,7 +3,7 @@ module Admin
     helpers APIHelpers::AuthHelpers
 
     before do
-      authenticate!
+      authenticate_admin!
     end
 
     resource 'courses' do

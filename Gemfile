@@ -28,6 +28,10 @@ gem 'bootsnap', '>= 1.4.2', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+
+  gem 'rspec-rails', '~> 3.9'
+
+  gem 'factory_bot_rails', '~> 5.1'
 end
 
 group :development do
@@ -46,8 +50,6 @@ gem 'grape', '~> 1.3'
 gem 'grape-entity', '~> 0.8.0'
 
 gem 'bcrypt', '~> 3.1'
-gem "devise", "~> 4.7"
+gem 'devise', '~> 4.7'
 gem 'devise_token_auth', '~> 1.1'
-
-
-gem "grape_devise_token_auth", "~> 0.1.4"
+gem 'grape_devise_token_auth', '~> 0.1.4'

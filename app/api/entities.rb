@@ -10,7 +10,7 @@ module Entities
   end
 
   class PriceEntity < Grape::Entity
-    expose :id
+    expose :currency_id
     expose :amount
   end
 

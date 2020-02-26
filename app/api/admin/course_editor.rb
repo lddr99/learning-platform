@@ -16,19 +16,19 @@ module Admin
 
       desc 'Create a course.'
       post do
-        course = Course.new({
+        course = Course.new(
           title: params[:title],
           is_available: params[:is_available],
           category_id: params[:category_id],
           duration_of_days: params[:duration_of_days],
           description: params[:description],
           url: params[:url]
-        })
+        )
 
-        course.build_price({
+        course.build_price(
           amount: params[:price][:amount],
           currency_id: params[:price][:currency_id]
-        })
+        )
 
         course.save
 

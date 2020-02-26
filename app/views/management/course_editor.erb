@@ -8,7 +8,7 @@
 <div id="app">
 
   <div class="container"
-    v-if="showLogin"
+    v-if="!isAdmin"
   >
     <div class="row my-5 justify-content-center align-items-center">
       <div class="card text-white bg-secondary mb-3" style="width: 300px;">
@@ -34,7 +34,7 @@
   </div>
 
   <div class="container"
-    v-if="showEditor"
+    v-if="isAdmin"
   >
     <div class="row row-cols-1 row-cols-md-3">
       <div class="col mb-4"
@@ -116,8 +116,13 @@
       Add Course
     </button>
     <div class="border-top my-5"></div>
+    <button type="button" class="my-2 btn btn-secondary btn-lg btn-block"
+      @click.prevent="fetchAll"
+    >
+      Refetch Data
+    </button>
     <button type="button" class="my-5 btn btn-secondary btn-lg btn-block"
-      @click.prevent="Logout"
+      @click.prevent="onLogout"
     >
       Logout
     </button>
@@ -130,8 +135,7 @@ new Vue({
   el: '#app',
   data () {
     return {
-      showLogin: true,
-      showEditor: false,
+      isAdmin: false,
       courseTemplate: {
         title: '',
         is_available: false,
@@ -150,25 +154,26 @@ new Vue({
     }
   },
   created () {
-    this.fetchAll();
+    //
+  },
+  watch: {
+    isAdmin: function () {
+      this.fetchAll();
+    },
   },
   methods: {
       fetchAll() {
         this.fetchCourses();
         this.fetchCategories();
         this.fetchCurrencies();
+
+        this.$toasted.info(`Fetch APIs`).goAway(5000);
       },
       fetchCourses() {
         axios.get('/api/admin/courses')
           .then(({data}) => {
             this.courses = data;
-            this.showLogin = false;
-            this.showEditor = true;
-          })
-          .catch(() => {
-            this.showLogin = true;
-            this.showEditor = false;
-          });;
+          });
       },
       fetchCategories() {
         axios.get('/api/admin/categories')
@@ -228,25 +233,32 @@ new Vue({
         this.courses.splice(deprecatedIndex, 1);
       },
       onSignIn(url) {
-
         const form = this.$refs.loginForm;
         const formData = new FormData(form);
 
         axios.post(url, formData)
           .then( response => {
-            let headers = {};
+            this.isAdmin = response.data.data.is_admin;
 
-            headers['access-token'] = response.headers['access-token'];
-            headers['token-type'] = response.headers['token-type'];
-            headers['client'] = response.headers['client'];
-            headers['expiry'] = response.headers['expiry'];
-            headers['uid'] = response.headers['uid'];
-
-            axios.get('/api-auth/validate_token', { params:{}, headers })
-              .then( response => {
-                this.fetchAll();
-              });
+            if (this.isAdmin) {
+                this.setAuthHeader(response.headers);
+            } else {
+              this.$toasted.error(`Access Denied, You don't have permission to access.`).goAway(5000);
+            }
           });
+      },
+      setAuthHeader(responseHeaders) {
+        let headers = {};
+
+        headers['access-token'] = responseHeaders['access-token'];
+        headers['token-type'] = responseHeaders['token-type'];
+        headers['client'] = responseHeaders['client'];
+        headers['expiry'] = responseHeaders['expiry'];
+        headers['uid'] = responseHeaders['uid'];
+
+        axios.defaults.headers.common = headers;
+
+        axios.get('/api-auth/validate_token');
       },
       onLogin() {
         const url = '/api-auth/sign_in';
@@ -258,11 +270,9 @@ new Vue({
 
         this.onSignIn(url);
       },
-
-      Logout() {
+      onLogout() {
         axios.delete('/api-auth/sign_out').catch(() => {
-          this.showLogin = true;
-          this.showEditor = false;
+          this.isAdmin = false;
         });
       },
   },

@@ -6,6 +6,7 @@ module V1
       authenticate!
     end
 
+    desc 'Return the user payments.'
     resource 'payments' do
       params do
         requires :course_id, type: Integer

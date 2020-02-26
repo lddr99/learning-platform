@@ -7,7 +7,7 @@ module Admin
     end
 
     resource 'courses' do
-      desc 'Return all courses.'
+      desc 'Return courses.'
       get do
         courses = Course.includes(:category, price: :currency).all
         data = Entities::CourseEntity.represent(courses)
@@ -70,6 +70,7 @@ module Admin
       end
     end
 
+    desc 'Return categories.'
     resource 'categories' do
       get do
         categories = Category.all
@@ -78,6 +79,7 @@ module Admin
       end
     end
 
+    desc 'Return currencies.'
     resource 'currencies' do
       get do
         currencies = Currency.all

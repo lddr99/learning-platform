@@ -20,6 +20,7 @@ module V1
         optional :category_ids, type: Array
       end
 
+      desc 'Return the user courses.'
       resource '/courses' do
         get do
           request_other_user!

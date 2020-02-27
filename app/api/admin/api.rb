@@ -7,6 +7,8 @@ module Admin
       authenticate_admin!
     end
 
-    mount CourseEditor
+    mount Courses
+    mount Categories
+    mount Currencies
   end
 end

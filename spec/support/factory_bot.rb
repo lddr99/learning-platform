@@ -19,7 +19,7 @@ end
 
 FactoryBot.define do
   factory :category do
-    name { 'category name' }
+    sequence(:name) { |n| "category #{n} name" }
   end
 
   factory :currency do
@@ -27,7 +27,6 @@ FactoryBot.define do
   end
 
   factory :price do
-    course
     currency
     amount { 100 }
   end
@@ -45,4 +44,3 @@ FactoryBot.define do
     end
   end
 end
-

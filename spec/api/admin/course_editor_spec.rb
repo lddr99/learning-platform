@@ -51,5 +51,27 @@ describe 'test the APIs for course editor', type: :request do
       expect(json_response['price']['amount']).to eq(course.price.amount.to_s)
       expect(json_response['price']['currency_id']).to eq(course.price.currency_id)
     end
+
+    it 'create a new course' do
+      course = build(:course)
+      price = build(:price)
+
+      params = {
+        title: course.title,
+        is_available: course.is_available,
+        duration_of_days: course.duration_of_days,
+        description: course.description,
+        url: course.url,
+        category_id: course.category_id,
+        price: {
+          amount: price.amount,
+          currency_id: price.currency_id
+        }
+      }
+
+      post course_api, params: params
+
+      expect(response).to have_http_status :created
+    end
   end
 end

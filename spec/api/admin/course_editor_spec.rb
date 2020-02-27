@@ -100,5 +100,14 @@ describe 'test the APIs for course editor', type: :request do
       expect(response).to have_http_status(200)
       expect(Course.find(course.id).price.amount).to eq params[:price][:amount]
     end
+
+    it 'delete the course' do
+      course = create(:course)
+
+      delete "#{course_api}/#{course.id}"
+
+      expect(response).to have_http_status(200)
+      expect(Course.exists?(course.id)).to be false
+    end
   end
 end

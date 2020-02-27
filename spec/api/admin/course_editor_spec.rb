@@ -109,5 +109,21 @@ describe 'test the APIs for course editor', type: :request do
       expect(response).to have_http_status(200)
       expect(Course.exists?(course.id)).to be false
     end
+
+    it 'return categories' do
+      categories = create_list(:category, 10)
+
+      get '/api/admin/categories'
+
+      expect(JSON.parse(response.body).count).to eq categories.count
+    end
+
+    it 'return currencies' do
+      currencies = create_list(:currency, 10)
+
+      get '/api/admin/currencies'
+
+      expect(JSON.parse(response.body).count).to eq currencies.count
+    end
   end
 end

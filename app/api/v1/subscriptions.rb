@@ -19,15 +19,14 @@ module V1
 
         today = DateTime.now
 
-        unless current_user.subscription.where(course_id: params[:course_id])
-                   .where('"start_at" <= ?', today)
-                   .where('"end_at" >= ?', today)
-                   .empty?
+        unless current_user.subscriptions
+                           .where(course_id: params[:course_id])
+                           .active.empty?
           error! 'subscription already exists.', 422
         end
 
         # In the demo, will auto-generate the payment and activate the subscription
-        subscription = current_user.subscription.create(
+        subscription = current_user.subscriptions.create(
           course_id: params[:course_id],
           start_at: today,
           end_at: today.advance(days: course.duration_of_days)
@@ -47,7 +46,7 @@ module V1
         optional :category_ids, type: Array[Integer]
       end
       get do
-        subscriptions = current_user.subscription
+        subscriptions = current_user.subscriptions
 
         if params['is_active'] == true
           subscriptions = subscriptions.active

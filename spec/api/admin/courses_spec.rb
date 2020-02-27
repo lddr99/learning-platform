@@ -1,42 +1,18 @@
 require 'rails_helper'
 
-describe 'test the APIs for course editor', type: :request do
+describe 'test course resource operations' do
   let(:course_api) { '/api/admin/courses' }
 
-  context 'admin permissions guard' do
-    it 'when the user didn\'t login' do
-      get course_api
-
-      expect(response.status).to eq(401)
-    end
-
-    it 'when the user does not have admin permission' do
-      user = create(:user)
-      sign_in user
-      get course_api
-
-      expect(response.status).to eq(403)
-    end
-
-    it 'when the user has admin permission' do
-      user = create(:admin_user)
-      sign_in user
-      get course_api
-
-      expect(response.status).to eq(200)
-    end
+  before do
+    user = create(:admin_user)
+    sign_in user
   end
 
-  context 'courses resource' do
-    before do
-      user = create(:admin_user)
-      sign_in user
-    end
-
+  context 'GET /api/admin/courses' do
     it 'return course entities' do
       course = create(:course)
 
-      get course_api
+      get '/api/admin/courses'
 
       json_response = JSON.parse(response.body).first
 
@@ -51,7 +27,8 @@ describe 'test the APIs for course editor', type: :request do
       expect(json_response['price']['amount']).to eq(course.price.amount.to_s)
       expect(json_response['price']['currency_id']).to eq(course.price.currency_id)
     end
-
+  end
+  context 'POST /api/admin/courses' do
     it 'create a new course' do
       course = build(:course)
       price = build(:price)
@@ -73,7 +50,8 @@ describe 'test the APIs for course editor', type: :request do
 
       expect(response).to have_http_status :created
     end
-
+  end
+  context 'PUT /api/admin/courses/{:id}' do
     it 'update the title of course' do
       course = create(:course)
       new_title = "new_#{course.title}"
@@ -100,7 +78,8 @@ describe 'test the APIs for course editor', type: :request do
       expect(response).to have_http_status(200)
       expect(Course.find(course.id).price.amount).to eq params[:price][:amount]
     end
-
+  end
+  context 'Delete /api/admin/courses/{:id}' do
     it 'delete the course' do
       course = create(:course)
 
@@ -108,22 +87,6 @@ describe 'test the APIs for course editor', type: :request do
 
       expect(response).to have_http_status(200)
       expect(Course.exists?(course.id)).to be false
-    end
-
-    it 'return categories' do
-      categories = create_list(:category, 10)
-
-      get '/api/admin/categories'
-
-      expect(JSON.parse(response.body).count).to eq categories.count
-    end
-
-    it 'return currencies' do
-      currencies = create_list(:currency, 10)
-
-      get '/api/admin/currencies'
-
-      expect(JSON.parse(response.body).count).to eq currencies.count
     end
   end
 end

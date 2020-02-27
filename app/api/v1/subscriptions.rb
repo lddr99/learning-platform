@@ -2,12 +2,12 @@ module V1
   class Subscriptions < Grape::API
     helpers APIHelpers::AuthHelpers
 
-    desc 'Subscribe to courses.'
-    resource 'subscriptions' do
+    resource '/subscriptions' do
       params do
         requires :course_id, type: Integer
       end
 
+      desc 'Subscribe to courses.'
       post do
         authenticate!
 
@@ -37,6 +37,32 @@ module V1
         )
 
         subscription.as_json
+      end
+
+      desc 'Return the user subscriptions.'
+      params do
+        optional :is_active, type: Boolean
+        optional :category_ids, type: Array[Integer]
+      end
+      get do
+        subscriptions = current_user.subscription
+
+        if params['is_active'] == true
+          subscriptions = subscriptions.active
+        elsif params['is_active'] == false
+          subscriptions = subscriptions.expired
+        end
+
+        subscriptions = subscriptions.includes(:course).references(:course)
+
+        unless params['category_ids'].nil?
+          subscriptions = subscriptions.where(
+            'courses.category_id in (?)',
+            params[:category_ids]
+          )
+        end
+
+        Entities::SubscriptionEntity.represent(subscriptions)
       end
     end
   end

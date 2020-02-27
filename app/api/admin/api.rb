@@ -8,5 +8,7 @@ module Admin
     end
 
     mount CourseEditor
+    mount Categories
+    mount Currencies
   end
 end

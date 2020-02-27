@@ -55,23 +55,5 @@ module Admin
         end
       end
     end
-
-    desc 'Return categories.'
-    resource 'categories' do
-      get do
-        categories = Category.all
-        data = Entities::CategoryEntity.represent(categories)
-        data.as_json
-      end
-    end
-
-    desc 'Return currencies.'
-    resource 'currencies' do
-      get do
-        currencies = Currency.all
-        data = Entities::CurrencyEntity.represent(currencies)
-        data.as_json
-      end
-    end
   end
 end

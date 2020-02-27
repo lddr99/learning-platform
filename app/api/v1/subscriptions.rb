@@ -19,10 +19,9 @@ module V1
 
         today = DateTime.now
 
-        unless current_user.subscription.where(course_id: params[:course_id])
-                   .where('"start_at" <= ?', today)
-                   .where('"end_at" >= ?', today)
-                   .empty?
+        unless current_user.subscription
+                           .where(course_id: params[:course_id])
+                           .active.empty?
           error! 'subscription already exists.', 422
         end
 

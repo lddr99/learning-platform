@@ -29,30 +29,22 @@ module Admin
         course
       end
 
-      desc 'Update a course.'
+      desc 'Update the course.'
       params do
         requires :id, type: Integer, desc: 'Course ID.'
       end
       route_param :id do
         put do
           course = Course.find(params[:id])
-          course.update(
-            title: params[:title],
-            is_available: params[:is_available],
-            category_id: params[:category_id],
-            duration_of_days: params[:duration_of_days],
-            description: params[:description],
-            url: params[:url]
-          )
+          course.update(params.slice(
+            :title, :is_available, :duration_of_days, :description, :url, :category_id
+          ))
 
-          course.price.update(
-            amount: params[:price][:amount],
-            currency_id: params[:price][:currency_id]
-          )
+          course.price.update(params[:price]) unless params[:price].nil?
         end
       end
 
-      desc 'Delete a course.'
+      desc 'Delete the course.'
       params do
         requires :id, type: Integer, desc: 'Course ID.'
       end

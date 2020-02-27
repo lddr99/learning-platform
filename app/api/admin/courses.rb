@@ -9,6 +9,18 @@ module Admin
       end
 
       desc 'Create a course.'
+      params do
+        requires :title, type: String
+        requires :is_available, type: Boolean
+        requires :category_id, type: Integer
+        requires :duration_of_days, type: Integer
+        requires :url, type: String
+        requires :price, type: Hash do
+          requires :amount, type: String
+          requires :currency_id, type: Integer
+        end
+        optional :description, type: String
+      end
       post do
         course = Course.new(
           title: params[:title],
@@ -30,6 +42,18 @@ module Admin
       end
 
       desc 'Update the course.'
+      params do
+        optional :title, type: String
+        optional :is_available, type: Boolean
+        optional :category_id, type: Integer
+        optional :duration_of_days, type: Integer
+        optional :url, type: String
+        optional :price, type: Hash do
+          requires :amount, type: String
+          requires :currency_id, type: Integer
+        end
+        optional :description, type: String
+      end
       params do
         requires :id, type: Integer, desc: 'Course ID.'
       end

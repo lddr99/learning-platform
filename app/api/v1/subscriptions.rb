@@ -55,7 +55,10 @@ module V1
           subscriptions = subscriptions.expired
         end
 
-        subscriptions = subscriptions.includes(:course).references(:course)
+        subscriptions = subscriptions.includes(
+          payment: :currency,
+          course: %i[category price]
+        ).references(:course)
 
         unless params['category_ids'].nil?
           subscriptions = subscriptions.where(

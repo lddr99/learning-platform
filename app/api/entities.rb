@@ -41,6 +41,7 @@ module Entities
   end
 
   class SubscriptionEntity < Grape::Entity
+    expose :id
     expose :course_id
     expose :start_at
     expose :end_at

@@ -1,5 +1,5 @@
 module Admin
-  class CourseEditor < Grape::API
+  class Courses < Grape::API
     resource 'courses' do
       desc 'Return courses.'
       get do

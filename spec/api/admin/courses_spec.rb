@@ -29,6 +29,17 @@ describe 'test course resource operations' do
     end
   end
   context 'POST /api/admin/courses' do
+    it 'fail for parameter missing' do
+      course = build(:course)
+
+      params = {
+        title: course.title
+      }
+
+      post course_api, params: params
+
+      expect(response).to have_http_status(400)
+    end
     it 'create a new course' do
       course = build(:course)
       price = build(:price)

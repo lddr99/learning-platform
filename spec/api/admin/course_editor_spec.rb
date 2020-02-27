@@ -73,5 +73,32 @@ describe 'test the APIs for course editor', type: :request do
 
       expect(response).to have_http_status :created
     end
+
+    it 'update the title of course' do
+      course = create(:course)
+      new_title = "new_#{course.title}"
+
+      params = { title: new_title }
+
+      put "#{course_api}/#{course.id}", params: params
+
+      expect(response).to have_http_status(200)
+      expect(Course.find(course.id).title).to eq new_title
+    end
+
+    it 'update the price of course' do
+      course = create(:course)
+
+      params = {
+        price: {
+          amount: course.price.amount * 10
+        }
+      }
+
+      put "#{course_api}/#{course.id}", params: params
+
+      expect(response).to have_http_status(200)
+      expect(Course.find(course.id).price.amount).to eq params[:price][:amount]
+    end
   end
 end

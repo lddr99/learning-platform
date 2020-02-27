@@ -2,6 +2,10 @@ module V1
   class Subscriptions < Grape::API
     helpers APIHelpers::AuthHelpers
 
+    before do
+      authenticate!
+    end
+
     resource '/subscriptions' do
       params do
         requires :course_id, type: Integer
@@ -9,8 +13,6 @@ module V1
 
       desc 'Subscribe to courses.'
       post do
-        authenticate!
-
         course = Course.find_by id: params[:course_id], is_available: true
 
         error! 'course is not available.', 422 if course.nil?

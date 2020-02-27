@@ -49,8 +49,8 @@ module Admin
         optional :duration_of_days, type: Integer
         optional :url, type: String
         optional :price, type: Hash do
-          requires :amount, type: String
-          requires :currency_id, type: Integer
+          optional :amount, type: String
+          optional :currency_id, type: Integer
         end
         optional :description, type: String
       end

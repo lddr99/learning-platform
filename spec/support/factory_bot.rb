@@ -44,3 +44,19 @@ FactoryBot.define do
     end
   end
 end
+
+FactoryBot.define do
+  factory :subscription do
+    course
+    today = DateTime.now
+
+    factory :active_subscription do
+      start_at { today }
+      end_at { today.next_day(10) }
+    end
+    factory :expired_subscription do
+      start_at { today.prev_day(10) }
+      end_at { today.prev_day(1) }
+    end
+  end
+end

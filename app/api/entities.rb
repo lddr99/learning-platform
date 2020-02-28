@@ -29,21 +29,22 @@ module Entities
     expose :price, using: PriceEntity
   end
 
-  class SubscriptionEntity < Grape::Entity
-    expose :course_id
-    expose :start_at
-    expose :end_at
-  end
-
-  class SubscriptionPaymentEntity < Grape::Entity
+  class PaymentEntity < Grape::Entity
     expose :id
-    expose :created_at, as: :payment_time
     expose :price do
       expose :amount
       expose :currency, as: :currency_id do |payment|
         payment.currency.name
       end
     end
-    expose :subscription, using: SubscriptionEntity
+    expose :created_at
+  end
+
+  class SubscriptionEntity < Grape::Entity
+    expose :course_id
+    expose :start_at
+    expose :end_at
+    expose :payment, using: PaymentEntity
+    expose :course, using: CourseEntity
   end
 end

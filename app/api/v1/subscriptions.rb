@@ -2,25 +2,26 @@ module V1
   class Subscriptions < Grape::API
     helpers APIHelpers::AuthHelpers
 
-    desc 'Subscribe to courses.'
-    resource 'subscriptions' do
+    before do
+      authenticate!
+    end
+
+    resource '/subscriptions' do
       params do
         requires :course_id, type: Integer
       end
 
+      desc 'Subscribe to courses.'
       post do
-        authenticate!
-
         course = Course.find_by id: params[:course_id], is_available: true
 
         error! 'course is not available.', 422 if course.nil?
 
         today = DateTime.now
 
-        unless current_user.subscription.where(course_id: params[:course_id])
-                   .where('"start_at" <= ?', today)
-                   .where('"end_at" >= ?', today)
-                   .empty?
+        unless current_user.subscription
+                           .where(course_id: params[:course_id])
+                           .active.empty?
           error! 'subscription already exists.', 422
         end
 
@@ -37,6 +38,35 @@ module V1
         )
 
         subscription.as_json
+      end
+
+      desc 'Return the user subscriptions.'
+      params do
+        optional :is_active, type: Boolean
+        optional :category_ids, type: Array[Integer]
+      end
+      get do
+        subscriptions = current_user.subscription
+
+        if params['is_active'] == true
+          subscriptions = subscriptions.active
+        elsif params['is_active'] == false
+          subscriptions = subscriptions.expired
+        end
+
+        subscriptions = subscriptions.includes(
+          payment: :currency,
+          course: %i[category price]
+        ).references(:course)
+
+        unless params['category_ids'].nil?
+          subscriptions = subscriptions.where(
+            'courses.category_id in (?)',
+            params[:category_ids]
+          )
+        end
+
+        Entities::SubscriptionEntity.represent(subscriptions)
       end
     end
   end

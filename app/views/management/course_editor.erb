@@ -157,8 +157,10 @@ new Vue({
     //
   },
   watch: {
-    isAdmin: function () {
-      this.fetchAll();
+    isAdmin: function (val) {
+      if (val) {
+        this.fetchAll();
+      }
     },
   },
   methods: {
@@ -260,21 +262,19 @@ new Vue({
         headers['uid'] = responseHeaders['uid'];
 
         axios.defaults.headers.common = headers;
-
-        axios.get('/api-auth/validate_token');
       },
       onLogin() {
-        const url = '/api-auth/sign_in';
+        const url = '/api/v1/auth/sign_in';
 
         this.onSignIn(url);
       },
       onRegister() {
-        const url = '/api-auth';
+        const url = '/api/v1/auth';
 
         this.onSignIn(url);
       },
       onLogout() {
-        axios.delete('/api-auth/sign_out').catch(() => {
+        axios.delete('/api/v1/auth/sign_out').then(() => {
           this.isAdmin = false;
         });
       },

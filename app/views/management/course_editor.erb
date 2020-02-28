@@ -46,7 +46,7 @@
           <div class="card-body">
             <form @submit.prevent="onSubmit(course)">
               <div class="form-group">
-                <label>Title</label>
+                <label>主題</label>
                 <input type="text" class="form-control" v-model="course.title" required>
               </div>
               <div class="form-group">
@@ -54,11 +54,11 @@
                 <input type="text" class="form-control" v-model="course.url" required>
               </div>
               <div class="form-group">
-                <label>Description</label>
+                <label>描述</label>
                 <input type="text" class="form-control" v-model="course.description">
               </div>
               <div class="form-group">
-                <label>Category</label>
+                <label>類型</label>
                 <select class="custom-select" v-model="course.category_id">
                   <option v-for="category in categories" v-bind:value="category.id">
                     {{ category.name }}
@@ -67,11 +67,11 @@
               </div>
               <div class="row form-group">
                 <div class="col">
-                  <label>Price</label>
-                  <input type="number" class="form-control" v-model="course.price.amount" required>
+                  <label>價格</label>
+                  <input type="number" step="0.01" class="form-control" v-model="course.price.amount" required>
                 </div>
                 <div class="col">
-                  <label>Currency</label>
+                  <label>幣別</label>
                   <select class="custom-select" v-model="course.price.currency_id">
                     <option v-for="currency in currencies" v-bind:value="currency.id">
                       {{ currency.name }}
@@ -80,7 +80,7 @@
                 </div>
               </div>
               <div class="form-group">
-                <label :for="'duration_of_days' + index">duration_of_days {{ course.duration_of_days }}</label>
+                <label :for="'duration_of_days' + index">課程效期 {{ course.duration_of_days }} 天</label>
                 <input type="range" class="custom-range" min="1" max="30"
                   :id="'duration_of_days' + index"
                   v-model="course.duration_of_days"
@@ -92,7 +92,7 @@
                     v-model="course.is_available"
                   >
                   <label class="custom-control-label" :for="'availableCheck' + index">
-                    is_available
+                    上架
                   </label>
                 </div>
               </div>
@@ -100,10 +100,10 @@
                 <button type="button" class="flex-shrink-1 btn btn-outline-light"
                   @click.prevent="removeCourse(index, course)"
                 >
-                  Delete
+                  刪除
                 </button>
                 &nbsp;
-                <button type="submit" class="w-100 btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" style="width: 77%;">儲存</button>
               </div>
             </form>
           </div>
@@ -113,18 +113,18 @@
     <button type="button" class="my-5 btn btn-warning btn-lg btn-block"
       @click.prevent="addCourse"
     >
-      Add Course
+      增加新課程
     </button>
     <div class="border-top my-5"></div>
     <button type="button" class="my-2 btn btn-secondary btn-lg btn-block"
       @click.prevent="fetchAll"
     >
-      Refetch Data
+      刷新課程資料
     </button>
     <button type="button" class="my-5 btn btn-secondary btn-lg btn-block"
       @click.prevent="onLogout"
     >
-      Logout
+      登出
     </button>
   </div>
 </div>
@@ -167,7 +167,7 @@ new Vue({
         this.fetchCategories();
         this.fetchCurrencies();
 
-        this.$toasted.info(`Fetch APIs`).goAway(5000);
+        this.$toasted.info(`獲取課程資料`).goAway(5000);
       },
       fetchCourses() {
         axios.get('/api/admin/courses')
@@ -192,10 +192,10 @@ new Vue({
         axios.post(url, course)
             .then(({ data }) => {
               course.id = data.id;
-              this.$toasted.success(`Create! (${course.title})`).goAway(5000);
+              this.$toasted.success(`建立課程 (${course.title})`).goAway(5000);
             })
             .catch(() => {
-              this.$toasted.error(`Fail! (${course.title})`).goAway(5000);
+              this.$toasted.error(`建立課程失敗 (${course.title})`).goAway(5000);
             });
       },
       updateCourse(course) {
@@ -203,10 +203,10 @@ new Vue({
 
         axios.put(url, course)
             .then(() => {
-              this.$toasted.success(`Update! (${course.title})`).goAway(5000);
+              this.$toasted.success(`更新課程 (${course.title})`).goAway(5000);
             })
             .catch(() => {
-              this.$toasted.error(`Fail! (${course.title})`).goAway(5000);
+              this.$toasted.error(`更新課程失敗 (${course.title})`).goAway(5000);
             });
       },
       deleteCourse(course) {
@@ -214,10 +214,10 @@ new Vue({
 
         axios.delete(url)
             .then(() => {
-              this.$toasted.info(`Delete! (${course.title})`).goAway(5000);
+              this.$toasted.info(`刪除課程 (${course.title})`).goAway(5000);
             })
             .catch(() => {
-              this.$toasted.error(`Fail! (${course.title})`).goAway(5000);
+              this.$toasted.error(`刪除課程失敗 (${course.title})`).goAway(5000);
             });
       },
       addCourse() {
@@ -243,8 +243,11 @@ new Vue({
             if (this.isAdmin) {
                 this.setAuthHeader(response.headers);
             } else {
-              this.$toasted.error(`Access Denied, You don't have permission to access.`).goAway(5000);
+              this.$toasted.error(`你沒有管理權限`).goAway(5000);
             }
+          })
+          .catch(() => {
+            this.$toasted.error(`帳號密碼錯誤或使用者已存在`).goAway(5000);
           });
       },
       setAuthHeader(responseHeaders) {
